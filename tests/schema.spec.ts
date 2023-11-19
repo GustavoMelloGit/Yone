@@ -40,4 +40,17 @@ describe('Schema class', () => {
     };
     expect(wrapper).not.toThrow();
   });
+
+  it('should not throw error if a value is not validated', async () => {
+    const schema = new Schema({
+      role: 'admin',
+      name: 'Joao',
+      nickname: 'jao',
+    });
+    const wrapper = () => {
+      schema.validate('role').string();
+      schema.validate('nickname').string();
+    };
+    expect(wrapper).not.toThrow();
+  });
 });
