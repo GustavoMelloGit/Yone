@@ -44,8 +44,17 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     return this.returnFuncs();
   }
 
-  private numberValidator(_error?: string): SchemaFuncs {
-    throw new ValidationError('Not implemented', 'none');
+  private numberValidator(error?: string): SchemaFuncs {
+    const valueAsNumber = Number(this.values[this.field]);
+
+    if (Number.isNaN(valueAsNumber)) {
+      throw new ValidationError(
+        error ?? defaultErrors.notNumber(String(this.field)),
+        String(this.field)
+      );
+    }
+
+    return this.returnFuncs();
   }
 
   private requiredValidator(error?: string): SchemaFuncs {
