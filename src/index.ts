@@ -1,6 +1,13 @@
 import { ValidationError } from './ValidateError';
 import { defaultErrors } from './defaultErrors';
-import { type IYone, type SchemaObj, type YoneFuncs } from './types/Schema';
+import {
+  MaxNumberFuncReturn,
+  MinNumberFuncReturn,
+  WithNumberFuncs,
+  type IYone,
+  type SchemaObj,
+  type YoneFuncs,
+} from './types/Schema';
 
 export class Yone<T extends SchemaObj> implements IYone<T> {
   private readonly values: T;
@@ -44,7 +51,7 @@ export class Yone<T extends SchemaObj> implements IYone<T> {
     return this.returnFuncs();
   }
 
-  private numberValidator(error?: string): YoneFuncs {
+  private numberValidator(error?: string): WithNumberFuncs<YoneFuncs> {
     const valueAsNumber = Number(this.values[this.field]);
 
     if (Number.isNaN(valueAsNumber)) {
@@ -54,7 +61,43 @@ export class Yone<T extends SchemaObj> implements IYone<T> {
       );
     }
 
-    return this.returnFuncs();
+    return {
+      ...this.returnFuncs(),
+      max: this.maxValueValidator.bind(this),
+      min: this.minValueValidator.bind(this),
+    };
+  }
+
+  private minValueValidator(
+    minValue: number,
+    error?: string
+  ): MinNumberFuncReturn {
+    const value = Number(this.values[this.field]);
+
+    if (value < minValue) {
+      throw new ValidationError(
+        error ?? defaultErrors.lessThenMinValue(minValue, String(this.field)),
+        String(this.field)
+      );
+    }
+
+    return { ...this.returnFuncs(), max: this.maxValueValidator.bind(this) };
+  }
+
+  private maxValueValidator(
+    maxValue: number,
+    error?: string
+  ): MaxNumberFuncReturn {
+    const value = Number(this.values[this.field]);
+
+    if (value > maxValue) {
+      throw new ValidationError(
+        error ?? defaultErrors.moreThenMaxValue(maxValue, String(this.field)),
+        String(this.field)
+      );
+    }
+
+    return { ...this.returnFuncs(), min: this.minValueValidator.bind(this) };
   }
 
   private requiredValidator(error?: string): YoneFuncs {
