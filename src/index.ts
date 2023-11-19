@@ -1,4 +1,4 @@
-import { ValidateError } from './ValidateError';
+import { ValidationError } from './ValidateError';
 import { defaultErrors } from './defaultErrors';
 import { type ISchema, type SchemaFuncs, type SchemaObj } from './types/Schema';
 
@@ -12,8 +12,9 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
 
   validate(validateField: keyof T): SchemaFuncs {
     if (!this.hasField(validateField)) {
-      throw new ValidateError(
-        `Field '${String(validateField)}' does not exist in the schema`
+      throw new ValidationError(
+        `Field '${String(validateField)}' does not exist in the schema`,
+        String(this.field)
       );
     }
     this.field = validateField;
@@ -34,8 +35,9 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
   private stringValidator(error?: string): SchemaFuncs {
     const isString = typeof this.values[this.field] === 'string';
     if (!isString)
-      throw new ValidateError(
-        error ?? defaultErrors.notString(String(this.field))
+      throw new ValidationError(
+        error ?? defaultErrors.notString(String(this.field)),
+        String(this.field)
       );
 
     return this.returnFuncs();
@@ -44,7 +46,11 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
   private requiredValidator(error?: string): SchemaFuncs {
     const value = this.values[this.field];
     const invalidValues: unknown[] = [null, undefined, ''];
-    if (invalidValues.includes(value)) throw new ValidateError(error);
+    if (invalidValues.includes(value))
+      throw new ValidationError(
+        error ?? defaultErrors.isRequired(String(this.field)),
+        String(this.field)
+      );
 
     return this.returnFuncs();
   }

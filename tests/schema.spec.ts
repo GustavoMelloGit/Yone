@@ -1,4 +1,4 @@
-import { ValidateError } from '../src/ValidateError';
+import { ValidationError } from '../src/ValidateError';
 import { defaultErrors } from '../src/defaultErrors';
 import { Schema } from '../src/index';
 
@@ -11,7 +11,11 @@ describe('Schema class', () => {
   });
 
   it('should be able to validate multiple fields at the same time with errors', async () => {
-    const expectedError = new ValidateError(defaultErrors.notString('years'));
+    const expectedError = new ValidationError(
+      defaultErrors.notString('years'),
+      'years'
+    );
+
     const schema = new Schema({
       role: 'admin',
       years: 10,

@@ -1,3 +1,4 @@
+import { defaultErrors } from '../src/defaultErrors';
 import { Schema } from '../src/index';
 
 describe('String Validator', () => {
@@ -21,10 +22,16 @@ describe('String Validator', () => {
     expect(wrapper).toThrow();
   });
 
-  it('should be able to pass a custom error message', async () => {
+  it('should be able to set a custom error message', async () => {
     const customErrorMessage = 'FIELD IS NOT CORRECT';
     const schema = new Schema({ role: 1 });
     const wrapper = () => schema.validate('role').string(customErrorMessage);
     expect(wrapper).toThrow(customErrorMessage);
+  });
+
+  it('should throw default error message if no custom message is given', async () => {
+    const schema = new Schema({ role: 10 });
+    const wrapper = () => schema.validate('role').string();
+    expect(wrapper).toThrow(defaultErrors.notString('role'));
   });
 });
