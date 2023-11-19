@@ -1,4 +1,4 @@
-import { ValidationError } from '../src/ValidateError';
+import { ValidationError } from '../src/ValidationError';
 import { defaultErrors } from '../src/defaultErrors';
 import { Yone } from '../src/index';
 

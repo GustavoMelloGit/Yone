@@ -1,4 +1,4 @@
-import { ValidationError } from './ValidateError';
+import { ValidationError } from './ValidationError';
 import { defaultErrors } from './defaultErrors';
 import {
   MaxNumberFuncReturn,
