@@ -29,6 +29,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     return {
       string: this.stringValidator.bind(this),
       required: this.requiredValidator.bind(this),
+      number: this.numberValidator.bind(this),
     };
   }
 
@@ -41,6 +42,10 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
       );
 
     return this.returnFuncs();
+  }
+
+  private numberValidator(_error?: string): SchemaFuncs {
+    throw new ValidationError('Not implemented', 'none');
   }
 
   private requiredValidator(error?: string): SchemaFuncs {
