@@ -23,14 +23,20 @@ describe('Number Validator', () => {
 
   it('should be able to set a custom error message', async () => {
     const customErrorMessage = 'FIELD IS NOT CORRECT';
-    const schema = new Schema({ role: 1 });
+    const schema = new Schema({ role: 'admin' });
     const wrapper = () => schema.validate('role').number(customErrorMessage);
     expect(wrapper).toThrow(customErrorMessage);
   });
 
   it('should throw default error message if no custom message is given', async () => {
-    const schema = new Schema({ role: 10 });
+    const schema = new Schema({ role: 'admin' });
     const wrapper = () => schema.validate('role').number();
     expect(wrapper).toThrow(defaultErrors.notNumber('role'));
+  });
+
+  it('should accept numbers as string if the cast doest not result into a NaN', async () => {
+    const schema = new Schema({ years: '10' });
+    const wrapper = () => schema.validate('years').number();
+    expect(wrapper).not.toThrow();
   });
 });
