@@ -2,6 +2,7 @@ export type SchemaObj = Record<string, unknown>;
 
 export type SchemaFuncs = {
   string: (error?: string) => SchemaFuncs;
+  required: (error?: string) => SchemaFuncs;
 };
 
 export type ISchema<T extends SchemaObj> = {

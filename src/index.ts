@@ -27,6 +27,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
   private returnFuncs(): SchemaFuncs {
     return {
       string: this.stringValidator.bind(this),
+      required: this.requiredValidator.bind(this),
     };
   }
 
@@ -36,6 +37,14 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
       throw new ValidateError(
         error ?? defaultErrors.notString(String(this.field))
       );
+
+    return this.returnFuncs();
+  }
+
+  private requiredValidator(error?: string): SchemaFuncs {
+    const value = this.values[this.field];
+    const invalidValues: unknown[] = [null, undefined, ''];
+    if (invalidValues.includes(value)) throw new ValidateError(error);
 
     return this.returnFuncs();
   }
