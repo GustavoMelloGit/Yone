@@ -1,15 +1,6 @@
-const defaultErrors = {
-  notString: 'field is not a string',
-};
-
-type SchemaObj = Record<string, unknown>;
-type SchemaFuncs = {
-  string: (error?: string) => SchemaFuncs;
-};
-
-type ISchema<T extends SchemaObj> = {
-  validate: (field: keyof T) => SchemaFuncs;
-};
+import { ValidateError } from './ValidateError';
+import { defaultErrors } from './defaultErrors';
+import { type ISchema, type SchemaFuncs, type SchemaObj } from './types/Schema';
 
 export class Schema<T extends SchemaObj> implements ISchema<T> {
   private readonly values: T;
@@ -19,32 +10,33 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     this.values = this.receivedValues;
   }
 
-  validate(field: keyof T): SchemaFuncs {
-    this.field = field;
-
+  validate(validateField: keyof T): SchemaFuncs {
+    if (!this.hasField(validateField)) {
+      throw new ValidateError(
+        `Field '${String(validateField)}' does not exist in the schema`
+      );
+    }
+    this.field = validateField;
     return this.returnFuncs();
+  }
+
+  private hasField(field: keyof T): boolean {
+    return field in this.values;
   }
 
   private returnFuncs(): SchemaFuncs {
     return {
-      string: this.stringVerifier,
+      string: this.stringVerifier.bind(this),
     };
   }
 
   private stringVerifier(error?: string): SchemaFuncs {
     const isString = typeof this.values[this.field] === 'string';
-    if (!isString) throw new Error(error ?? defaultErrors.notString);
+    if (!isString)
+      throw new ValidateError(
+        error ?? defaultErrors.notString(String(this.field))
+      );
 
     return this.returnFuncs();
   }
 }
-
-type Values = {
-  role: string;
-};
-
-const defaultValue: Values = {
-  role: 'test-role',
-};
-const validationSchema = new Schema<Values>(defaultValue);
-validationSchema.validate('role').string();
