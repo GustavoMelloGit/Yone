@@ -10,17 +10,17 @@ npm install yone
 
 ## Usage
 ```ts
-import { Schema } from 'yone';
+import { Yone } from 'yone';
 
-// Create a schema with initial data
-const schema = new Schema({ role: 'admin', age: 25 });
+// Create a yone with initial data
+const yone = new Yone({ role: 'admin', age: 25 });
 
 try {
   // Validate a string field
-  schema.validate('role').string();
+  yone.validate('role').string();
 
   // Validate an age field with a custom error message
-  schema.validate('age').number('Age must be a number');
+  yone.validate('age').number('Age must be a number');
 } catch (error) {
   console.error(error.message);
 }
@@ -31,36 +31,36 @@ try {
 - **Custom Tests:** Define custom validation tests to suit your specific requirements.
 
 ## API
-### `Schema<T>` Constructor:
+### `IYone<T>` Constructor:
 
 ```ts
-const schema = new Schema(initialData: T);
+const yone = new Yone(initialData: T);
 ```
-Initializes a schema with the provided data.
+Initializes a yone with the provided data.
 
-### `validate(field: keyof T): SchemaFuncs`
+### `validate(field: keyof T): YoneFuncs`
 
 ```ts
-schema.validate('fieldName').<validationMethod>();
+yone.validate('fieldName').<validationMethod>();
 ```
 Begins the validation process for the specified field.
 
-### `SchemaFuncs:` 
+### `YoneFuncs:` 
 A set of validation methods available for each field, such as string, number, etc.
 
 ## Examples
 
 Validate a String Field
 ```ts
-schema.validate('username').string();
+yone.validate('username').string();
 ```
 Validate a Number Field with Custom Error Message
 ```ts
-schema.validate('age').number('Age must be a valid number');
+yone.validate('age').number('Age must be a valid number');
 ```
 Custom Validation Test
 ```ts
-schema.validate('customField').test((value) => value > 10, 'Value must be greater than 10');
+yone.validate('customField').test((value) => value > 10, 'Value must be greater than 10');
 ```
 
 
