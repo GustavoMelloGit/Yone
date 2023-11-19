@@ -1,8 +1,8 @@
 import { ValidationError } from './ValidateError';
 import { defaultErrors } from './defaultErrors';
-import { type ISchema, type SchemaFuncs, type SchemaObj } from './types/Schema';
+import { type IYone, type SchemaObj, type YoneFuncs } from './types/Schema';
 
-export class Schema<T extends SchemaObj> implements ISchema<T> {
+export class Yone<T extends SchemaObj> implements IYone<T> {
   private readonly values: T;
   private field!: keyof T;
 
@@ -10,7 +10,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     this.values = this.receivedValues;
   }
 
-  validate(validateField: keyof T): SchemaFuncs {
+  validate(validateField: keyof T): YoneFuncs {
     if (!this.hasField(validateField)) {
       throw new ValidationError(
         `Field '${String(validateField)}' does not exist in the schema`,
@@ -25,7 +25,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     return field in this.values;
   }
 
-  private returnFuncs(): SchemaFuncs {
+  private returnFuncs(): YoneFuncs {
     return {
       string: this.stringValidator.bind(this),
       required: this.requiredValidator.bind(this),
@@ -33,7 +33,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     };
   }
 
-  private stringValidator(error?: string): SchemaFuncs {
+  private stringValidator(error?: string): YoneFuncs {
     const isString = typeof this.values[this.field] === 'string';
     if (!isString)
       throw new ValidationError(
@@ -44,7 +44,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     return this.returnFuncs();
   }
 
-  private numberValidator(error?: string): SchemaFuncs {
+  private numberValidator(error?: string): YoneFuncs {
     const valueAsNumber = Number(this.values[this.field]);
 
     if (Number.isNaN(valueAsNumber)) {
@@ -57,7 +57,7 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
     return this.returnFuncs();
   }
 
-  private requiredValidator(error?: string): SchemaFuncs {
+  private requiredValidator(error?: string): YoneFuncs {
     const value = this.values[this.field];
     const invalidValues: unknown[] = [null, undefined, ''];
     if (invalidValues.includes(value))

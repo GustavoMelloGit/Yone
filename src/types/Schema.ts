@@ -1,11 +1,11 @@
 export type SchemaObj = Record<string, unknown>;
 
-export type SchemaFuncs = {
-  string: (error?: string) => SchemaFuncs;
-  required: (error?: string) => SchemaFuncs;
-  number: (error?: string) => SchemaFuncs;
+export type YoneFuncs = {
+  string: (error?: string) => YoneFuncs;
+  required: (error?: string) => YoneFuncs;
+  number: (error?: string) => YoneFuncs;
 };
 
-export type ISchema<T extends SchemaObj> = {
-  validate: (field: keyof T) => SchemaFuncs;
+export type IYone<T extends SchemaObj> = {
+  validate: (field: keyof T) => YoneFuncs;
 };
