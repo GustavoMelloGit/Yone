@@ -26,11 +26,11 @@ export class Schema<T extends SchemaObj> implements ISchema<T> {
 
   private returnFuncs(): SchemaFuncs {
     return {
-      string: this.stringVerifier.bind(this),
+      string: this.stringValidator.bind(this),
     };
   }
 
-  private stringVerifier(error?: string): SchemaFuncs {
+  private stringValidator(error?: string): SchemaFuncs {
     const isString = typeof this.values[this.field] === 'string';
     if (!isString)
       throw new ValidateError(
