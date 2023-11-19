@@ -1,4 +1,5 @@
 # Yone: Data Validation Library
+
 Yone is a versatile data validation library written in TypeScript. It supports validation for various data types, including primitives, and allows you to define custom validation tests.
 
 ## Installation
