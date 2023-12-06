@@ -1,20 +1,22 @@
 export type SchemaObj = Record<string, unknown>;
 
-export type YoneFuncs = {
-  string: (error?: string) => YoneFuncs;
-  required: (error?: string) => YoneFuncs;
-  number: (error?: string) => WithNumberFuncs<YoneFuncs>;
-};
+export interface PrimitiveValidator {
+  string: (error?: string) => IStringValidator;
+  number: (error?: string) => INumberValidator;
+}
 
-export type MaxNumberFuncReturn = YoneFuncs & {
-  min: (minValue: number, error?: string) => MinNumberFuncReturn;
-};
-export type MinNumberFuncReturn = YoneFuncs & {
-  max: (maxValue: number, error?: string) => MaxNumberFuncReturn;
-};
+export interface INumberValidator {
+  min: (minValue: number, error?: string) => INumberValidator;
+  max: (maxValue: number, error?: string) => INumberValidator;
+  required: (error?: string) => PrimitiveValidator;
+}
 
-export type WithNumberFuncs<T> = T & MaxNumberFuncReturn & MinNumberFuncReturn;
+export interface IStringValidator {
+  min: (minLength: number, error?: string) => IStringValidator;
+  max: (maxLength: number, error?: string) => IStringValidator;
+  required: (error?: string) => PrimitiveValidator;
+}
 
-export interface IYone<T extends SchemaObj> {
-  validate: (field: keyof T) => YoneFuncs;
+export interface IYone {
+  validate: (field: string) => PrimitiveValidator;
 }
